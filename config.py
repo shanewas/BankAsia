@@ -25,17 +25,40 @@ Creators:
 
 # Imports
 from selenium import webdriver
+from datetime import date
+import os
+
+
+
 # Uncomment below block if using remote webdriver
 
 # from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-APP_NAME = 'CIB and NID automation'
-CLIENT_NAME = 'CBL'
+APP_NAME = 'Bank_Asia_Account_Verification'
+CLIENT_NAME = 'Bank Asia'
+
+
+#defining driver properties
+DIRPATH = os.getcwd()
+BASE_DIR = DIRPATH
+TODAY_DATE = str(date.today())
+path = BASE_DIR + '/' + TODAY_DATE
+options = webdriver.ChromeOptions()
+prefs = {"download.default_directory": path}
+options.add_experimental_option("prefs", prefs)
+options.headless = True
+options.add_argument('--no-sandbox')
+options.add_argument('--disable-dev-shm-usage')
+
+options.add_argument("--window-size=1325x4000")
+
+
+
 
 # In case of using local webdriver
 WEBDRIVER_PATH = '/usr/lib64/chromium/chromedriver'
 # WEBDRIVER_PATH = 'chromedriver.exe'
-BROWSER = webdriver.Chrome(executable_path=WEBDRIVER_PATH)
+BROWSER = webdriver.Chrome(chrome_options=options,executable_path=WEBDRIVER_PATH)
 
 # Uncomment below block if using remote webdriver
 
@@ -51,3 +74,5 @@ AWS_ACCESS_TOKEN = ''
 NUMBER_OF_ENTRIES = ''
 
 LOGGING_SERVER_URL = 'wss://localhost:8765'
+
+
