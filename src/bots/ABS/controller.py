@@ -244,9 +244,49 @@ class abs:
             print(traceback.format_exc())
 
 
-            dirname=definitions.TEMP_FOLDER
+        dirname=definitions.TEMP_FOLDER
 
-            if os.path.exists(os.path.join(dirname, "data")):
-                shutil.rmtree(os.path.join(dirname, "data"))
+        if os.path.exists(os.path.join(dirname, "data")):
+            shutil.rmtree(os.path.join(dirname, "data"))
 
-            utils.creating_folders(dirname)
+        utils.creating_folders(dirname)
+
+        table_id = browser.find_element(By.XPATH,definitions.verification_list_table)
+        rows = table_id.find_elements(By.TAG_NAME, "tr")  # get all of the rows in the table
+        url_count=0
+
+        for row in rows:
+            try:
+                attr = row.find_elements(By.TAG_NAME, "td")[9]
+                # print(attr)# account type column index
+                accnt_type = attr.get_attribute('innerHTML')
+                print(accnt_type)
+                if (accnt_type == "Individual") or (accnt_type == "UDC"):
+                    col = row.find_elements(By.TAG_NAME, "td")[-1]  # note: index start from 0, 1 is col 2
+                    link = col.get_attribute('innerHTML')
+                    link = link.split('"')[1]
+                    definitions.urls.append(link)
+                    url_count += 1 # take only 5 entries
+                #TODO add institution check, add remarks, need change, submit
+                elif (accnt_type != "Individual") and (accnt_type != "UDC"):
+                    print(".............indi........................")
+                    gettinglogs("not Invididual entry going to the next entry",False)
+
+                    remarks_field = browser.find_element_by_xpath(definitions.remarks_field)
+
+                    remarks_field.send_keys(f'{accnt_type}. Bot will not check it')
+                    need_change = browser.find_element_by_xpath(definitions.need_change)
+                    browser.execute_script("arguments[0].click();", need_change)
+                    submit = browser.find_element_by_xpath(definitions.submit)
+                    browser.execute_script("arguments[0].click();", submit)
+                if url_count == (number_of_entries+1):
+                    break
+            except Exception as e:
+                gettinglogs("No account found", False)
+                print(traceback.format_exc())
+        browser.execute_script("window.open('about:blank', 'details');")
+        browser.switch_to.window("details")
+
+        account_type_str=insert_text_to_array(browser, definitions.acnt_type_arr, 'account_type', definitions.account_type)
+        print("account type str ",account_type_str)
+        print("reached here")

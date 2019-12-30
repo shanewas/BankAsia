@@ -25,6 +25,7 @@ Creators:
 
 #Login page 
 
+import os
 
 number_of_entries = 0
 
@@ -33,7 +34,12 @@ abs_url = r'http://10.88.1.174:8888/emob/f?p=106'
 domain = r'http://10.88.1.174:8888/emob/'
 BEC_URL = r'https://192.168.249.10/partner/'
 
-# OUTPUT_FOLDER=
+# 
+
+base_dir=os.getcwd()
+OUTPUT_FOLDER=os.path.join(base_dir,"/storage","/output")
+TEMP_FOLDER = os.path.join(base_dir,"/storage","/temp_data")
+
 
 
 log_in_user = r'//*[@id="P101_USERNAME"]'
@@ -61,6 +67,10 @@ verification = r"/html/body/div[2]/div/ul/li/ul/li[2]/a"
 
 no_more_entries = r'/html/body/form/section[2]/div[2]/span'
 next_page = r'//*[@id="report_R44001444593139622"]/tbody[3]/tr/td/table/tbody/tr/td[3]/span/a[1]'
+
+
+
+customer_table_xpath=r'//*[@id="report_R62497158322150695"]/tbody[2]/tr/td/table/tbody'
 
 verification_list_table = r'//*[@id="report_R44001444593139622"]/tbody[2]/tr/td/table/tbody'
 need_change = r'//*[@id="f03_0001_0001"]'
@@ -188,7 +198,6 @@ aml_status_arr = []
 # Personal Info
 name_arr = []
 gender_arr = []
-d_o_b_arr = []
 occupation_arr = []
 father_name_arr = []
 mother_name_arr = []
@@ -200,14 +209,14 @@ mobile_no_arr = []
 mail_id_arr = []
 
 # Related Document
-document_type_arr = []
-document_no_arr = []
+document_type_arr = [[]]
+document_no_arr = [[]]
 
 # Accouny_Operator
-cutomer_id_arr = []
-cutomer_name_arr = []
-
-cutomer_dob_arr = []
+customer_id_arr = [[]]
+customer_name_arr = [[]]
+customer_dob_arr = [[]]
+customer_url_arr =[[]]
 
 # Address Details
 
@@ -235,16 +244,16 @@ nom_frnt_arr = []
 nom_bck_arr = []
 
 # joined acc
-customer2_id_arr=[]
-cutomer_name_arr2 = []
-cutomer_dob_arr2 = []
-customer2_doc_type = []
-customer2_doc_no = []
-customer2_nid_front_pic_path = []
-# images
+# customer2_id_arr=[]
+# cutomer_name_arr2 = []
+# cutomer_dob_arr2 = []
+# customer2_doc_type = []
+# customer2_doc_no = []
+# customer2_nid_front_pic_path = []
+# # images
 
 live_pic_path = []
 added_pic_path = []
 signcard_pic_path = []
-nid_front_pic_path = []
+nid_front_pic_path = [[]]
 nom_image_path = []
