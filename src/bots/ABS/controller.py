@@ -29,7 +29,8 @@ sys.path.append("...") # Adds higher directory to python modules path.
 
 import config
 import definitions
-import utils.utils
+import utils.utils as utils
+import shutil
 import time
 import traceback
 
@@ -155,3 +156,97 @@ class abs:
         except Exception as e:
             print(traceback.format_exc())
             return None
+
+
+    def get_customer_info(self,xpath,browser):
+        table_id = browser.find_element(By.XPATH, xpath)
+        rows = table_id.find_elements(By.TAG_NAME, "tr")
+        for row in rows:
+            customer_name_feild = row.find_elements(By.TAG_NAME, "td")[1]
+            definitions.customer_name_arr[0].append(customer_name_feild.get_attribute('innerHTML'))
+            customer_id_feild = row.find_elements(By.TAG_NAME, "td")[0]
+            definitions.customer_id_arr[0].append(customer_id_feild.get_attribute('innerHTML'))
+            customer_dob_feild = row.find_elements(By.TAG_NAME, "td")[2]
+            definitions.customer_dob_arr[0].append(customer_dob_feild.get_attribute('innerHTML'))
+            customer_url_feild = row.find_elements(By.TAG_NAME, "td")[3]
+            url_str=customer_url_feild.get_attribute('innerHTML')
+            url_str=url_str.split(" ")
+            definitions.customer_url_arr[0].append((url_str[1].split('"')[1]))
+
+
+    def insert_text_to_array(self,browser,field_arr,field_name,field_xpath):
+        field_str = 'field name not found'
+        try:
+            field = browser.find_element_by_xpath(field_xpath)
+            field_str=field.text
+            print(field_str)
+            if len(field_str.replace(" ", "")) != 0:
+                field_arr.append(field_str)
+                print(field_arr)
+            else:
+                field_arr.append("not given")
+                print(field_arr)
+                raise Exception("{0} is not given".format(field_name))
+        except Exception as e:
+            print(traceback.format_exc())
+            print(field_arr)
+            field_arr.append("not given")
+        return field_str
+
+
+
+
+
+
+    def download_doc_img(self,browser,path, image_array, image_field, dirname, directory, account_number,src):
+        try:
+            browser.get(str(src))
+            time.sleep(1)
+            exists = False
+            while exists == False:
+                if os.path.exists(path + '/download'):
+                    shutil.move(path + "/download",
+                                os.path.join(dirname, directory.format(account_number)))
+                    exists = True
+            image_array.append(os.path.join(dirname, directory.format(account_number)))
+        except Exception as e:
+            print(traceback.format_exc())
+            image_array.append("No {0}".format(image_field))
+
+
+    def get_image_data(self,browser,path, image_array, image_field, dirname, directory, account_number, image_xpath):
+        try:
+            image = browser.find_element_by_xpath(image_xpath)
+            if image:
+                src = image.get_attribute('src')
+                browser.get(src)
+                time.sleep(1)
+                exists = False
+                while exists == False:
+                    if os.path.exists(path + '/download'):
+                        shutil.move(path + "/download",
+                                    os.path.join(dirname, directory.format(account_number)))
+                        exists = True
+                image_array.append(os.path.join(dirname, directory.format(account_number)))
+        except Exception as e:
+            print(traceback.format_exc())
+            image_array.append("No {0}".format(image_field))
+
+
+
+    def get_detail_info(self,number_of_entries, browser, path):
+        browser.switch_to.window(browser.window_handles[0])
+
+        try:
+            default_url = browser.current_url
+            browser.get(default_url)
+        except:
+            print(traceback.format_exc())
+
+
+            dirname=definitions.TEMP_FOLDER
+
+            if os.path.exists(os.path.join(dirname, "data")):
+                shutil.rmtree(os.path.join(dirname, "data"))
+
+            utils.creating_folders(dirname)
