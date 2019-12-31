@@ -26,7 +26,8 @@ Creators:
 import sys
 import os
 sys.path.append("...") # Adds higher directory to python modules path.
-
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 import config
 import definitions
 import utils.utils as utils
@@ -282,11 +283,61 @@ class abs:
                 if url_count == (number_of_entries+1):
                     break
             except Exception as e:
-                gettinglogs("No account found", False)
                 print(traceback.format_exc())
         browser.execute_script("window.open('about:blank', 'details');")
         browser.switch_to.window("details")
 
-        account_type_str=insert_text_to_array(browser, definitions.acnt_type_arr, 'account_type', definitions.account_type)
+        account_type_str=self.insert_text_to_array(browser, definitions.acnt_type_arr, 'account_type', definitions.account_type)
         print("account type str ",account_type_str)
         print("reached here")
+        if ("Joint" not in account_type_str) and ("Single" not in account_type_str):
+            print("in if")
+            try:
+                browser.switch_to.window(browser.window_handles[0])
+                remarks_field = browser.find_element_by_xpath('//*[@id="f02_0001"]')
+                remarks_field.send_keys(f'{account_type_str}. Bot will not check it')
+                need_change = browser.find_element_by_xpath(r'//*[@id="f03_0001_0001"]')
+                browser.execute_script("arguments[0].click();", need_change)
+                submit = browser.find_element_by_xpath(r'//*[@id="B35815888295108623"]/span')
+                browser.execute_script("arguments[0].click();", submit)
+                return None   
+            except:
+                print(traceback.format_exc())
+        else:
+            print("in else")
+            acnt_no_str=self.insert_text_to_array(browser, definitions.acnt_no_arr,definitions.acnt_no)
+
+            self.get_customer_info(definitions.customer_table_xpath,browser)
+
+            self.insert_text_to_array(browser, definitions.acnt_title_arr, 'acnt_title', definitions.acnt_title)
+
+
+            self.insert_text_to_array(browser, definitions.agent_boothname_arr, 'agent_boothname', definitions.agent_boothname)
+
+
+            self.insert_text_to_array(browser, definitions.sector_code_arr, 'sector_code', definitions.sector_code)
+
+            self.insert_text_to_array(browser, definitions.aml_status_arr, 'aml_status', definitions.aml_status)
+
+            # personal Info
+            self.insert_text_to_array(browser, definitions.name_arr, 'name', definitions.name)
+
+            self.insert_text_to_array(browser, definitions.gender_arr, 'gender', definitions.gender)
+
+            self.insert_text_to_array(browser, definitions.occupation_arr, 'occupation',definitions.occupation)
+
+            self.insert_text_to_array(browser, definitions.father_name_arr, 'father_name', definitions.father_name)
+
+
+            self.insert_text_to_array(browser, definitions.mother_name_arr, 'mother_name', definitions.mother_name)
+
+            self.insert_text_to_array(browser, definitions.maritual_status_arr, 'maritual_status', definitions.maritual_status)
+
+            self.insert_text_to_array(browser, definitions.spouse_name_arr, 'spouse_name', definitions.spouse_name)
+
+
+            # Contact Info
+
+            self.insert_text_to_array(browser, definitions.mobile_no_arr, 'mobile_no', definitions.mobile_no)
+
+            self.insert_text_to_array(browser, definitions.mail_id_arr, 'mail_id', definitions.mail_id)
