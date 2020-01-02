@@ -59,6 +59,7 @@ options.add_argument("--window-size=1325x4000")
 WEBDRIVER_PATH = '/usr/lib64/chromium/chromedriver'
 # WEBDRIVER_PATH = 'chromedriver.exe'
 BROWSER = webdriver.Chrome(chrome_options=options,executable_path=WEBDRIVER_PATH)
+BROWSER_NID = webdriver.Chrome(chrome_options=options,executable_path=WEBDRIVER_PATH)
 
 # Uncomment below block if using remote webdriver
 

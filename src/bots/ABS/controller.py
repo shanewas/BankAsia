@@ -30,10 +30,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import config
 import definitions
-import .utils as utils
+from .utils import utils
 import shutil
 import time
 import traceback
+import cv2
+import pandas as pd
 
 class abs:
 
@@ -187,7 +189,20 @@ class abs:
             except:
                 definitions.customer_url_arr[0].append("None")
 
-
+    def download_doc_img(self,browser,path, image_array, image_field, dirname, directory, account_number,src):
+        try:
+            browser.get(str(src))
+            time.sleep(1)
+            exists = False
+            while exists == False:
+                if os.path.exists(path + '/download'):
+                    shutil.move(path + "/download",
+                                os.path.join(dirname, directory.format(account_number)))
+                    exists = True
+            image_array.append(os.path.join(dirname, directory.format(account_number)))
+        except Exception as e:
+            print(traceback.format_exc())
+            image_array.append("No {0}".format(image_field))
 
     def insert_joined_info_to_arr(self,browser,doc_type_arr,doc_number_arr,abs_doc_image_arr,doc_type_xpath):
         try:
@@ -203,6 +218,8 @@ class abs:
                     definitions.document_no_arr[0].append("None")
                 try:
                     document_image_arr[0].append(document_type_str["doc_image"])
+                    self.download_doc_img(browser, config.path, definitions.nid_front_pic_path, "NID front pic", definitions.TEMP_FOLDER,  r"storage/temp_data/nid_front/{0}nid_frnt.jpg",
+                        document_type_str["number"],document_type_str["doc_image"])
                     
                 except:
                     definitions.document_image_arr[0].append('None')
@@ -256,20 +273,7 @@ class abs:
 
 
 
-    def download_doc_img(self,browser,path, image_array, image_field, dirname, directory, account_number,src):
-        try:
-            browser.get(str(src))
-            time.sleep(1)
-            exists = False
-            while exists == False:
-                if os.path.exists(path + '/download'):
-                    shutil.move(path + "/download",
-                                os.path.join(dirname, directory.format(account_number)))
-                    exists = True
-            image_array.append(os.path.join(dirname, directory.format(account_number)))
-        except Exception as e:
-            print(traceback.format_exc())
-            image_array.append("No {0}".format(image_field))
+
 
 
     def get_image_data(self,browser,path, image_array, image_field, dirname, directory, account_number, image_xpath):
@@ -464,15 +468,90 @@ class abs:
                     definitions.nom_bck_arr.append("not_present")
 
 
-#fix download folder
-                self.get_image_data(browser, path, definitions.live_pic_path, "live picture", dirname, r"temp_data/live_pic/{0}live_pic_test.jpg",
-                        acnt_no_str, definitions.live_picture)
 
-                self.get_image_data(browser, path, definitions.signcard_pic_path, "Sign picture", dirname, r"temp_data/sign_Card/{0}sign_pic.jpg",
+                self.get_image_data(browser, config.path, definitions.live_pic_path, "live picture", definitions.dirname, r"temp_data/live_pic/{0}live_pic_test.jpg",
+                        acnt_no_str, definitions.live_picture)
+                self.get_image_data(browser, config.path, definitions.signcard_pic_path, "Sign picture", dirname, r"temp_data/sign_Card/{0}sign_pic.jpg",
                         acnt_no_str, definitions.Sign_picture)
-                self.get_image_data(browser, path, definitions.nom_image_path, "Nominee pic", dirname,  r"temp_data/nom_img/{0}nom_img.jpg",
+                self.get_image_data(browser, config.path, definitions.nom_image_path, "Nominee pic", dirname,  r"temp_data/nom_img/{0}nom_img.jpg",
                         acnt_no_str, definitions.nom_front_pic)
 
+
+
+
+            if ("No" not in definitions.signcard_pic_path[-1])  and ("No" not in definitions.nid_front_pic_path[-1]):
+                try:
+                    img1 = cv2.imread(os.path.join(dirname, r"temp_data/nid_front/{0}nid_frnt.jpg".format(acnt_no_str)))
+                except Exception as e:
+                    print(traceback.format_exc())
+                try:
+                    img2 = cv2.imread(os.path.join(dirname, r"temp_data/sign_Card/{0}sign_pic.jpg".format(acnt_no_str)))
+                except Exception as e:
+                    print(traceback.format_exc())
+
+                # gettinglogs("concatinating images  of account no {0} ".format(acnt_no_str), True)
+
+                try:
+                    im_v_resize = utils.vconcat_resize_min([img1, img2])
+
+                except Exception as e:
+                    print(traceback.format_exc())
+
+                try:
+                    cv2.imwrite((os.path.join(dirname, r"temp_data/full/{0}added.jpg".format(acnt_no_str))), im_v_resize)
+                    added_pic_path.append(os.path.join(dirname, r"temp_data/full/{0}added.jpg".format(acnt_no_str)))
+                except:
+                    print(traceback.format_exc())
+                    definitions.added_pic_path.append("None")
+            else:
+                definitions.added_pic_path.append("None")
+            data = {"acnt_no": definitions.acnt_no_arr[:1],
+                            "acnt_title": definitions.acnt_title_arr[:1],
+                            "acnt_type": definitions.acnt_type_arr[:1],
+                            "agent_boothname": definitions.agent_boothname_arr[:1],
+                            "sector_code": definitions.sector_code_arr[:1],
+                            "aml_status": definitions.aml_status_arr[:1],
+                            "name": definitions.name_arr[:1],
+                            "gender": definitions.gender_arr[:1],
+                            "occupation": definitions.occupation_arr[:1],
+                            "father_name": definitions.father_name_arr[:1],
+                            "mother_name": definitions.mother_name_arr[:1],
+                            "maritual_status": definitions.maritual_status_arr[:1],
+                            "spouse_name": definitions.spouse_name_arr[:1],
+                            "mobile_no": definitions.mobile_no_arr[:1],
+                            "mail_id": definitions.mail_id_arr[:1],
+                            "document_type": definitions.document_type_arr[:1],
+                            "document_no": definitions.document_no_arr[:1],
+                            "cutomer_id": definitions.cutomer_id_arr[:1],
+                            "cutomer_name": definitions.cutomer_name_arr[:1],
+                            "cutomer_dob": definitions.cutomer_dob_arr[:1],
+                            "perm_district": definitions.perm_district_arr[:1],
+                            "perm_upazila": definitions.perm_upazila_arr[:1],
+                            "perm_union": definitions.perm_union_arr[:1],
+                            "perm_village": definitions.perm_village_arr[:1],
+                            "pres_district": definitions.pres_district_arr[:1],
+                            "pres_upazila": definitions.pres_upazila_arr[:1],
+                            "pres_union": definitions.pres_union_arr[:1],
+                            "pres_village": definitions.pres_village_arr[:1],
+                            "nom_name": definitions.nom_name_arr[:1],
+                            "nom_father": definitions.nom_father_arr[:1],
+                            "nom_mother": definitions.nom_mother_arr[:1],
+                            "nom_dob": definitions.nom_dob_arr[:1],
+                            "nom_rel": definitions.nom_rel_arr[:1],
+                            "nom_percent": definitions.nom_percent_arr[:1],
+                            "nom_doc_type": definitions.nom_doc_type_arr[:1],
+                            "nom_doc_no": definitions.nom_doc_no_arr[:1],
+                            "nom_img": definitions.nom_img_arr[:1],
+                            "nom_frnt": definitions.nom_frnt_arr[:1],
+                            "nom_bck": definitions.nom_bck_arr[:1],
+                            "live_pic_path": definitions.live_pic_path[:1],
+                            "added_pic_path": definitions.added_pic_path[:1],
+                            "nid_front_pic_path": definitions.nid_front_pic_path[:1],
+                            "signcard_pic_path": definitions.signcard_pic_path[:1],
+                            "nom_image_path": definitions.nom_image_path[:1],
+                            "urls": definitions.urls[:1]
+                            }
+            df=pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in data.items() ]))
 
                 
 

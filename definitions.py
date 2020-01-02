@@ -30,8 +30,18 @@ import os
 number_of_entries = 0
 
 
-abs_url = r'http://10.88.1.174:8888/emob/f?p=106'
-domain = r'http://10.88.1.174:8888/emob/'
+
+nid_user= 'ba.pmd'
+nid_pass= '123456'
+
+# abs_url = r'http://10.88.1.174:8888/emob/f?p=106'
+# domain = r'http://10.88.1.174:8888/emob/'
+# BEC_URL = r'https://192.168.249.10/partner/'
+
+
+#temp
+abs_url = r'file:///home/tawhid/Desktop/first_page/Login.html'
+domain = r''
 BEC_URL = r'https://192.168.249.10/partner/'
 
 # 
@@ -50,18 +60,26 @@ login_button= r'/html/body/form/div[1]/div/div[2]/div[2]/div/div[1]/div[2]/div/d
 
 #Captcha
 captcha_div=r'/html/body/form/div[1]/div/div[2]/div[2]/div/div[1]/div[2]/div/div[2]/div[4]/div[2]/div/span'
-
 captchaXPath = r'//*[@id="P101_CAPTCHA_CONTAINER"]/div[2]/div/span'
 
 #Cards_page
 
-agent_banking_card=r'//*[@id="R72507117000906705_cards"]/li[1]/div/a'
+# agent_banking_card=r'//*[@id="R72507117000906705_cards"]/li[1]/div/a'
 
 #Dropdown menu page
 
-top_menu = r'/html/body/form/div[1]/header/a[1]'
-account_aproval = r"/html/body/div[2]/div/ul/li/a"
-verification = r"/html/body/div[2]/div/ul/li/ul/li[2]/a"
+# top_menu = r'/html/body/form/div[1]/header/a[1]'
+# account_aproval = r"/html/body/div[2]/div/ul/li/a"
+# verification = r"/html/body/div[2]/div/ul/li/ul/li[2]/a"
+ 
+
+#temp
+
+agent_banking_card=r'//*[@id="R72507117000906705_cards"]/li[2]/div/a'
+top_menu = r'/html/body/form/div[1]/header/a[2]'
+account_aproval = r"/html/body/div[4]/div/ul/li[4]/a"
+verification = r"/html/body/div[4]/div/ul/li[4]/ul/li[2]/a"
+
 
 #Account verification List
 
@@ -177,6 +195,31 @@ nom_back_pic = r'//*[@id="report_R51682743462638959"]/tbody[2]/tr/td/table/tbody
 
 
 
+
+
+
+
+
+
+#NID _ xpaths
+
+nid_user_feild=r'//*[@id="pt1:username::content"]'
+nid_pass_feild=r'//*[@id="pt1:password::content"]'
+nid_login_button=r'//*[@id="pt1:logon"]'
+
+
+nid_number=r'//*[@id="pt1:it1::content"]'
+nid_dob=r'//*[@id="pt1:id1::content"]'
+nid_search_button=r'//*[@id="pt1:cb3"]'
+
+
+
+
+
+
+
+
+
 #ARRAYS
 
 
@@ -253,3 +296,11 @@ added_pic_path = []
 signcard_pic_path = []
 nid_front_pic_path = [[]]
 nom_image_path = []
+
+
+
+
+
+#NID_arrays
+
+nid_verification_status=[[]]
