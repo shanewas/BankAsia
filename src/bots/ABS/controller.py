@@ -25,19 +25,27 @@ Creators:
 
 import sys
 import os
-sys.path.append("...") # Adds higher directory to python modules path.
+base_dir=os.path.abspath(os.path.join(os.getcwd(),"../../.."))
+sys.path.append(str(base_dir)+"/definitions.py") # Adds higher directory to python modules path.
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import config
 import definitions
-from .utils import utils
+from utils import utils
 import shutil
 import time
 import traceback
 import cv2
 import pandas as pd
 
+
 class abs:
+
+    def __init__(self):
+        pass
+
+
+
 
     def logging_to_abs(self, browser,username,password,captcha):
         inputXPath = definitions.input_captcha_XPath
@@ -49,15 +57,18 @@ class abs:
         browser.execute_script("arguments[0].click();", login)
 
     def login_process(self, browser):
-        browser = utils.driver()
+        
         try:
             browser.get(definitions.abs_url)
             browser.maximize_window()
             log_in_user = definitions.log_in_user
             log_in_psw = definitions.log_in_psw
             captcha = ''
-            SITE_ROOT = os.path.dirname(os.path.realpath(__name__))
-            captchaFile = os.path.join(SITE_ROOT, "bank_asia_bots/captcha.txt")
+            SITE_ROOT = definitions.OUTPUT_FOLDER
+            captchaFile = SITE_ROOT+"/captcha.txt"
+            # two_up = os.path.abspath(os.path.join(os.getcwd(),"../../.."))
+            # print(two_up)
+            print(captchaFile)
             if os.path.exists(captchaFile):
                 with open(captchaFile, 'r') as f:
                     captcha = f.read()
@@ -67,12 +78,17 @@ class abs:
                     print(captcha_txt,'   ',username_txt,'  ',password_txt)
                     f.close()
                 self.logging_to_abs(browser,username_txt,password_txt,captcha_txt)
-                time.sleep(3)
-                dirname = os.path.dirname(__file__)
-                CUSTOM_DIR_NAME = 'captcha'
-                captcha_dir= os.path.join(dirname, CUSTOM_DIR_NAME)
-                utils.getScreenshot(browser, "checkPOST", captcha_dir)
-                os.remove(captchaFile)
+
+
+
+                #temporary
+                # time.sleep(3)
+                # dirname = os.path.dirname(__file__)
+                # CUSTOM_DIR_NAME = 'captcha'
+                # captcha_dir= os.path.join(dirname, CUSTOM_DIR_NAME)
+                # utils.getScreenshot(browser, "checkPOST", captcha_dir)
+                # os.remove(captchaFile)
+
                 print(captcha)
             else:
                 raise Exception('captcha not found!!')
@@ -97,41 +113,41 @@ class abs:
         account_aproval = definitions.account_aproval
         verification = definitions.verification
         try:
-            utils.hovering_to_options(account_aproval,browser)
-            utils.hovering_to_options(verification,browser)
+            utils().hovering_to_options(account_aproval,browser)
+            utils().hovering_to_options(verification,browser)
         except Exception as e:
             print(traceback.format_exc())
         return browser
 
-    def run(self, browser):
-        try:
-            while True:
-                acnt_no = ' '
-                try:
-                    if browser.find_element_by_xpath(definitions.no_more_entries):
-                        print ("Element exists")
-                        browser.quit()
-                        break
-                except:
-                    print(traceback.format_exc())
-                try:
-                    res=get_info(number_of_entries, browser, path)
-                    if res == None:
-                        continue
-                    df = res['df']
-                    acnt_no = res['acnt_no']
-                    print(df)
-                    checks_browser=doings_checks(df, browser)
-                    dispatch(checks_browser, number_of_entries)
-                    print(i, "iiiiiiiiiiiiiiiiiiiiii")
-                except:
-                    print(traceback.format_exc())
-                    continue
-            raise Exception('Closing browser')
-        except Exception as e:
-            print(traceback.format_exc())
-            # gettinglogs("Something went wrong please check", False)
-            browser.quit()
+    # def run(self, browser):
+    #     try:
+    #         while True:
+    #             acnt_no = ' '
+    #             try:
+    #                 if browser.find_element_by_xpath(definitions.no_more_entries):
+    #                     print ("Element exists")
+    #                     browser.quit()
+    #                     break
+    #             except:
+    #                 print(traceback.format_exc())
+    #             try:
+    #                 res=get_info(number_of_entries, browser, path)
+    #                 if res == None:
+    #                     continue
+    #                 df = res['df']
+    #                 acnt_no = res['acnt_no']
+    #                 print(df)
+    #                 checks_browser=doings_checks(df, browser)
+    #                 dispatch(checks_browser, number_of_entries)
+    #                 print(i, "iiiiiiiiiiiiiiiiiiiiii")
+    #             except:
+    #                 print(traceback.format_exc())
+    #                 continue
+    #         raise Exception('Closing browser')
+    #     except Exception as e:
+    #         print(traceback.format_exc())
+    #         # gettinglogs("Something went wrong please check", False)
+    #         browser.quit()
 # Customer document info 
     def get_docnumber_from_table(self, browser, xpath):
         # gets document number from the table , will only take NID number
@@ -143,14 +159,8 @@ class abs:
                 document_number = row.find_elements(By.TAG_NAME, "td")[1]
                 attr_type = attr.get_attribute('innerHTML')
                 doc_image=row.find_elements(By.TAG_NAME, "img")[0]
-                print(doc_image)
                 doc_image= doc_image.get_attribute("src")
-                print("doc_imdoc_imagedoc_imagedoc_imagedoc_imagedoc_imagedoc_imageagedoc_image",doc_image)
-
-
                 if"national" in attr_type.lower():
-                    print("if", attr_type)
-
                     context = {"type": attr_type, "number": document_number.get_attribute('innerHTML'),"doc_image":doc_image}
                     print(context)
                     return context
@@ -170,6 +180,7 @@ class abs:
                 definitions.customer_name_arr[0].append(customer_name_feild.get_attribute('innerHTML'))
             except:
                 definitions.customer_name_arr[0].append("None")
+            
             try:
                 customer_id_feild = row.find_elements(By.TAG_NAME, "td")[0]
                 definitions.customer_id_arr[0].append(customer_id_feild.get_attribute('innerHTML'))
@@ -188,6 +199,8 @@ class abs:
                 definitions.customer_url_arr[0].append((url_str[1].split('"')[1]))
             except:
                 definitions.customer_url_arr[0].append("None")
+        print( definitions.customer_id_arr[0])
+            
 
     def download_doc_img(self,browser,path, image_array, image_field, dirname, directory, account_number,src):
         try:
@@ -239,7 +252,6 @@ class abs:
         try:
             field = browser.find_element_by_xpath(field_xpath)
             field_str=field.text
-            print(field_str)
             if len(field_str.replace(" ", "")) != 0:
                 field_arr.append(field_str)
                 print(field_arr)
@@ -256,7 +268,7 @@ class abs:
 
     def get_joined_acnt_info(self,browser,main_account_doc_table,sec_account_doc_table,cutomer_url_arr):
         count=0
-        for items in cutomer_url_arr:
+        for items in cutomer_url_arr[0]:
             browser.get(items)
             browser.save_screenshot("{0}.png".format(count))
             count+=1
@@ -311,7 +323,7 @@ class abs:
         if os.path.exists(os.path.join(dirname, "temp_data")):
             shutil.rmtree(os.path.join(dirname, "temp_data"))
 
-        utils.creating_folders(dirname)
+        utils().creating_folders(dirname)
 
         table_id = browser.find_element(By.XPATH,definitions.verification_list_table)
         rows = table_id.find_elements(By.TAG_NAME, "tr")  # get all of the rows in the table
@@ -363,7 +375,7 @@ class abs:
                     print(traceback.format_exc())
             else:
                 print("in else")
-                acnt_no_str=self.insert_text_to_array(browser, definitions.acnt_no_arr,definitions.acnt_no)
+                acnt_no_str=self.insert_text_to_array(browser, definitions.acnt_no_arr,'accnt_number',definitions.acnt_no)
 
                 self.get_customer_info(definitions.customer_table_xpath,browser)
 
@@ -401,7 +413,8 @@ class abs:
                 self.insert_text_to_array(browser, definitions.mail_id_arr, 'mail_id', definitions.mail_id)
 
                 #document_ Info
-                self.get_joined_acnt_info(definitions.customer_main_doc_table,definitions.customer_sec_doc_table)
+                print(definitions.customer_url_arr)
+                self.get_joined_acnt_info(browser,definitions.customer_main_doc_table,definitions.customer_sec_doc_table,definitions.customer_url_arr)
 
 
 
@@ -492,7 +505,7 @@ class abs:
                 # gettinglogs("concatinating images  of account no {0} ".format(acnt_no_str), True)
 
                 try:
-                    im_v_resize = utils.vconcat_resize_min([img1, img2])
+                    im_v_resize = utils().vconcat_resize_min([img1, img2])
 
                 except Exception as e:
                     print(traceback.format_exc())
@@ -552,6 +565,18 @@ class abs:
                             "urls": definitions.urls[:1]
                             }
             df=pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in data.items() ]))
+            print(df)
 
-                
 
+    def running(self):
+        browser = utils().driver()
+        login_browser=self.login_process(browser)
+        to_verification_list=self.goingto_verification_page(login_browser)
+        self.get_detail_info(definitions.number_of_entries, to_verification_list, config.path)
+    
+
+ab=abs()
+
+login_browser=ab.login_process(config.BROWSER)
+to_verification = ab.goingto_verification_page(login_browser)
+ab.get_detail_info(definitions.number_of_entries, to_verification, definitions.base_dir)
