@@ -37,8 +37,8 @@ BEC_URL = r'https://192.168.249.10/partner/'
 # 
 
 base_dir=os.getcwd()
-OUTPUT_FOLDER=os.path.join(base_dir,"/storage","/output")
-TEMP_FOLDER = os.path.join(base_dir,"/storage","/temp_data")
+OUTPUT_FOLDER=(base_dir,"/storage")
+TEMP_FOLDER = (base_dir+"/storage")
 
 
 
@@ -78,8 +78,8 @@ submit = r'//*[@id="B35815888295108623"]/span'
 remarks_field= r'//*[@id="f02_0001"]'
 
 #temp folders list
-folders = ["data", "data/cropped", "data/full", "data/live_pic", "data/nid_back", "data/nid_front", "data/nom_img",'data/customer2_nid_front',
-        "data/sign_Card", "data/thresh", ]
+folders = ['output',"temp_data", "temp_data/cropped", "temp_data/full", "temp_data/live_pic", "temp_data/nid_back", "temp_data/nid_front", "temp_data/nom_img",'temp_data/customer2_nid_front',
+        "temp_data/sign_Card", "temp_data/thresh" ]
 
 
 #Details page
@@ -127,26 +127,20 @@ doc_type= r'//*[@id="report_R51601459985692709"]/tbody[2]/tr/td/table/tbody'
 
 # joint account scenerio
 
+customer_main_doc_table= r'//*[@id="report_R51601459985692709"]/tbody[2]/tr/td/table/tbody'
+customer_sec_doc_table=r'//*[@id="report_R31874087525714563"]/tbody[2]/tr/td/table/tbody'
+bacKbutton=r'//*[@id="P447_BACK_TO_PREVIOUS"]/span'
 
 
+
+#Adress
 perm_district=r'//*[@id="report_R51606549056692720"]/tbody[2]/tr/td/table/tbody/tr[1]/td[2]'
-
 perm_upazila=r'//*[@id="report_R51606549056692720"]/tbody[2]/tr/td/table/tbody/tr[1]/td[3]' 
 perm_union=r'//*[@id="report_R51606549056692720"]/tbody[2]/tr/td/table/tbody/tr[1]/td[4]'
-
-
 perm_village=r'//*[@id="report_R51606549056692720"]/tbody[2]/tr/td/table/tbody/tr[1]/td[6]'
-
-
 pres_district=r'//*[@id="report_R51606549056692720"]/tbody[2]/tr/td/table/tbody/tr[2]/td[2]'
-
-
-
 pres_upazila=r'//*[@id="report_R51606549056692720"]/tbody[2]/tr/td/table/tbody/tr[2]/td[3]'
-
 pres_union=r'//*[@id="report_R51606549056692720"]/tbody[2]/tr/td/table/tbody/tr[2]/td[4]'
-
-
 pres_village=r'//*[@id="report_R51606549056692720"]/tbody[2]/tr/td/table/tbody/tr[2]/td[6]'
 
 
@@ -211,6 +205,8 @@ mail_id_arr = []
 # Related Document
 document_type_arr = [[]]
 document_no_arr = [[]]
+document_image_arr = [[]]
+
 
 # Accouny_Operator
 customer_id_arr = [[]]
